@@ -33,11 +33,12 @@ const db = getFirestore(app);
 export default function App() {
 
   const [contacts, setContacts] = useState([]);
+  const [apiUsers, setApiUsers] = useState([]);
   const contactsCollection = collection(db, "contacts");
 
 
   useEffect(() => {
-
+    getApiUsers();
     const q = query(
       contactsCollection,
       orderBy("nombre")
@@ -92,6 +93,14 @@ export default function App() {
 
   };
 
+  //API
+  const getApiUsers = async () => {
+  const response = await fetch("https://jsonplaceholder.typicode.com/users");
+  const data = await response.json();
+
+  setApiUsers(data);
+};
+
 
   return (
     <div className="app-container">
@@ -106,7 +115,19 @@ export default function App() {
         onUpdate={updateContact}
       />
 
+      <h2>Otros contactos</h2>
+
+      {apiUsers.map((user) => (
+      <div key={user.id} className="card">
+      <h3>{user.name}</h3>
+      <p>Teléfono: {user.phone}</p>
+      <p>Email: {user.email}</p>
+      </div>
+))}
+
     </div>
+
+  
   );
 }
 
